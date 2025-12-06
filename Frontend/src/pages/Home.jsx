@@ -1,123 +1,130 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../Styles/Home.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import CarCard from "../components/CarCard.jsx";
 import CarFilter from "../components/CarFilter.jsx";
 import Loading from "../components/Loading.jsx";
+import api from "../api.js";
 
 export default function Home() {
-    const [cars, setCars] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const query = searchParams.get("q") || ""; 
-    const [authorized, setAuthorized] = useState(true);
-    const token = localStorage.getItem('authToken');
+  const [cars, setCars] = useState([]);              
+  const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [fileteredCars, setFilteredCars] = useState([]);
 
-    const [filteredCars, setFilteredCars] = useState([]);
+  const token = localStorage.getItem('authToken');
 
+ 
+  useEffect(() => {
+    if (!token) {
+      navigate('/login', { replace: true });
+      return;
+    }
 
-    useEffect(() => {
-    const fetchNews = async () => {
+    const fetchCars = async () => {
       try {
-        const response = await axios.get('https://74713bf48bcf197a.mokky.dev/cars',{
-          headers: { 
+        setLoading(true);
+        const response = await api('cars/get_all_cars', {
+          method: 'GET',
+          headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        setCars(response.data);
-        setAuthorized(true);
-        setFilteredCars(response.data);
 
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
 
+        const data = await response.json();
+        setCars(data.cars || []);
+        setFilteredCars(data.cars || []);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          setAuthorized(false);
-          console.log('Пользователь не авторизован. Пожалуйста, войдите в систему.');
-        } else
-        console.error('Ошибка загрузки новостей:', error);
+        console.error('Ошибка загрузки машин:', error);
+        if (error.message.includes('401') || error.response?.status === 401) {
+          localStorage.removeItem('authToken');
+          navigate('/login', { replace: true });
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNews();
-  }, []);
-
-
-
-
-
-
+    fetchCars();
+  }, [token, navigate]); 
   const handleFilter = ({ brand, minPrice, maxPrice, status }) => {
-    let filtered = cars;
-
-    if (brand !== "all") {
-      filtered = filtered.filter((car) => car.brand === brand);
+     if (brand == "all") {
+      setFilteredCars(cars);
     }
 
-    if (minPrice) {
-      filtered = filtered.filter((car) => car.pricePerDay >= minPrice);
+    // console.log(filtered.filter(car => car.brand === brand));
+
+    if (brand && brand !== "all") {
+      setFilteredCars(fileteredCars.filter(car => car.brand === brand));
+      console.log(fileteredCars.filter(car => car.brand === brand));
     }
 
-    if (maxPrice) {
-      filtered = filtered.filter((car) => car.pricePerDay <= maxPrice);
+    if (minPrice !== undefined && minPrice !== "") {
+      setFilteredCars(fileteredCars.filter(car => car.pricePerDay >= Number(minPrice)));
     }
 
-    if (status !== "all") {
-      if (status === "available") {
-        filtered = filtered.filter((car) => car.available === true);
-      } else {
-        filtered = filtered.filter((car) => car.available === false);
-      }
+    if (maxPrice !== undefined && maxPrice !== "") {
+      setFilteredCars(fileteredCars.filter(car => car.pricePerDay <= Number(maxPrice)));
     }
 
-    setFilteredCars(filtered);
+    if (status && status !== "all") {
+      const isAvailable = status === "available";
+      setFilteredCars(fileteredCars.filter(car => car.available === isAvailable));
+    }
+
+    console.log(cars);
   };
 
+ 
+  const handleReset = () => {
+    setCars(cars);
+  };
 
+  if (loading) return <Loading />;
 
+  return (
+    <main>
+      <section className="hero-section">
+        <div className="container">
+          <h1 className="display-4 fw-bold">
+            Аренда автомобилей премиум класса
+          </h1>
+          <p className="lead mt-3">
+            Выберите идеальный автомобиль для вашей поездки из нашего современного парка.<br />
+            Удобная аренда с гибкими условиями.
+          </p>
+        </div>
+      </section>
 
-if (loading) return <Loading />;
+      <div className="container my-5">
+        <CarFilter onFilter={handleFilter} onReset={handleReset} />
 
+        <p className="text-muted">
+          Найдено автомобилей: <strong>{cars.length}</strong>
+          {cars.length !== cars.length && (
+            <button className="btn btn-link p-0 ms-3" onClick={handleReset}>
+              Сбросить фильтры
+            </button>
+          )}
+        </p>
 
-    return (
-        <main>
-            <section className="hero-section">
-                <div className="container">
-                    <h1 className="display-4 fw-bold">
-                        Аренда автомобилей премиум класса
-                    </h1>
-                    <p className="lead mt-3">
-                        Выберите идеальный автомобиль для вашей поездки из нашего современного парка.<br />
-                        Удобная аренда с гибкими условиями.
-                    </p>
-                </div>
-            </section>
-
-            <div className="container my-5">
-
-                {/* Фильтры */}
-                <CarFilter onFilter={handleFilter} />
-
-
-                <p className="text-muted">
-                    Найдено автомобилей: <strong id="car-count">{filteredCars.length}</strong>
-                </p>
-
-                <div 
-                    className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4" 
-                    id="cars-container"
-                >
-
-                    {/* Автомобиль */}
-                     {filteredCars.map(item => (
-                        <CarCard key={item.id} car={item} />
-                    ))}
-
-                </div>
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+          {fileteredCars.length > 0 ? (
+            fileteredCars.map(item => (
+              <CarCard key={item.id} car={item} />
+            ))
+          ) : (
+            <div className="col-12 text-center py-5">
+              <p className="text-muted">Автомобили не найдены по вашим критериям.</p>
             </div>
-        </main>
-    );
+          )}
+        </div>
+      </div>
+    </main>
+  );
 }

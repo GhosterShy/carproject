@@ -3,6 +3,7 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import Loading from "../components/Loading";
 import "../Styles/Detail.css";
+import api from "../api";
 
 
 export default function CarDetail() {
@@ -13,15 +14,17 @@ export default function CarDetail() {
     const [carData, setcarData] = useState(carDataFromState || null);
     const [loading, setLoading] = useState(!carDataFromState);
 
+    console.log(id);
+
 
     useEffect(() => {
         if (!carDataFromState) {
         const fetchcarData = async () => {
             try {
-            const response = await axios.get(`https://74713bf48bcf197a.mokky.dev/cars/${id}`);
-            setcarData(response.data);
+            const response = await api(`/cars/${id}`);
+            setcarData(response.data.car);
             } catch (error) {
-            console.error("Ошибка загрузки статьи:", error);
+            console.error("Ошибка загрузки:", error);
             } finally {
             setLoading(false);
             }
@@ -33,6 +36,9 @@ export default function CarDetail() {
   if (!carData) {
     return <Loading />;
   }
+
+
+  
 
     return (
         <div className="container py-5">
@@ -112,7 +118,7 @@ export default function CarDetail() {
                                 <div>
                                     <p className="text-muted mb-1">Цена аренды</p>
                                     <div className="price-big">
-                                        ₽{carData.pricePerDay.toLocaleString()} 
+                                        {carData.pricePerDay} T
                                         <span className="fs-5 text-muted fw-normal">/ день</span>
                                     </div>
                                 </div>

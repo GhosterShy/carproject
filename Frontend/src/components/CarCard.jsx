@@ -39,7 +39,7 @@ export default function CarCard({ car }) {
                                 <small className="text-muted fs-6">/день</small>
                             </div>
                         </div>
-                        <Link to={`/car/${car.id}`} className="btn btn-primary rounded-pill px-4 py-2 shadow-sm" style={{ fontWeight: "600" }}>
+                        <Link state={car} to={`/car/${car._id}`} className="btn btn-primary rounded-pill px-4 py-2 shadow-sm" style={{ fontWeight: "600" }}>
                             Подробнее
                         </Link>
                     </div>

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
 export default function CarFilter({ onFilter }) {
-  const [brand, setBrand] = useState("all");
+  const [brand, setBrand] = useState("All");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("All");
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     onFilter({
       brand,
       minPrice: Number(minPrice),
@@ -29,7 +30,7 @@ export default function CarFilter({ onFilter }) {
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
           >
-            <option value="all">Все марки</option>
+            <option value="All">Все марки</option>
             <option value="BMW">BMW</option>
             <option value="Mercedes">Mercedes</option>
             <option value="Audi">Audi</option>
@@ -68,9 +69,9 @@ export default function CarFilter({ onFilter }) {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value="all">Все</option>
-            <option value="available">Доступно</option>
-            <option value="busy">Занято</option>
+            <option value="">Все</option>
+            <option value="true">Доступно</option>
+            <option value="false">Занято</option>
           </select>
         </div>
 

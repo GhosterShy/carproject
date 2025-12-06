@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,Link } from "react-router-dom";
 
 
 
 export default function Header() {
-    const [searchParams] = useSearchParams();
-    const [cars, setCars] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
 
     return(
@@ -21,7 +17,8 @@ export default function Header() {
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav ms-auto">
-          <li className="nav-item"><a className="nav-link active" href="#">Автомобили</a></li>
+          <li className="nav-item"><Link className="nav-link active" style={{color:"blue"}} to={'profile'}>Профиль</Link></li>
+          <li className="nav-item"><Link className="nav-link active" to={'/'}>Автомобили</Link></li>
           <li className="nav-item"><a className="nav-link" href="#">О нас</a></li>
           <li className="nav-item"><a className="nav-link" href="#">Контакты</a></li>
         </ul>
