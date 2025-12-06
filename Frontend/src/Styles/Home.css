@@ -1,0 +1,55 @@
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .navbar-brand img {
+      height: 40px;
+    }
+    .hero-section {
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 100px 0;
+      text-align: center;
+      opacity: 80%;
+      margin-left: 5%;
+      margin-right: 5%;
+      margin-top: 1.2rem;
+      border-radius: 20px;
+    }
+    .car-card {
+      transition: transform 0.3s;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .car-card:hover {
+      transform: translateY(-10px);
+    }
+    .car-img {
+      height: 200px;
+      object-fit: cover;
+    }
+    .badge-available {
+      background-color: #28a745;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.9rem;
+      padding: 0.4em 0.8em;
+    }
+    .badge-booked {
+      background-color: #dc3545;
+    }
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+    footer {
+      background-color: #343a40;
+      color: white;
+      padding: 40px 0 20px;
+    }
