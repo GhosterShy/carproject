@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
 export default function CarFilter({ onFilter }) {
-  const [brand, setBrand] = useState("All");
+  const [brand, setBrand] = useState("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [status, setStatus] = useState("All");
+  const [status, setStatus] = useState("all");
 
   const handleSubmit = (e) => {
     e.preventDefault();

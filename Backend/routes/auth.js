@@ -105,12 +105,6 @@ router.post('/login', async (req, res) => {
 
 
 
-
-
-
-
-
-
 router.get('/profile', authenticateJWT, async (req, res) => {
 
   try {
@@ -135,6 +129,77 @@ router.get('/profile', authenticateJWT, async (req, res) => {
     });
   }
 });
+
+
+
+
+// router.post("/upload-avatar", authenticateJWT, async (req, res) => {
+//   try {
+//     const { avatarUrl } = req.body;
+
+//     if (!avatarUrl || typeof avatarUrl !== "string") {
+//       return res.status(400).json({ error: "Неверная ссылка" });
+//     }
+
+ 
+//     const validImageUrl = avatarUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+//     if (!validImageUrl) {
+//       return res.status(400).json({ error: "Ссылка должна вести на изображение" });
+//     }
+
+//     req.user.avatar = avatarUrl.trim();
+//     await req.user.save();
+
+//     res.json({ avatar: req.user.avatar });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Ошибка сохранения аватара" });
+//   }
+// });
+
+
+router.post("/upload-avatar", authenticateJWT, async (req, res) => {
+  try {
+    const { avatarUrl } = req.body;
+
+    if (!avatarUrl || typeof avatarUrl !== "string") {
+      return res.status(400).json({ error: "Неверная ссылка" });
+    }
+
+  
+    try {
+      new URL(avatarUrl);
+    } catch {
+      return res.status(400).json({ error: "Некорректный URL" });
+    }
+
+
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(avatarUrl);
+    if (!isImage) {
+      return res.status(400).json({ error: "Ссылка должна вести на изображение" });
+    }
+
+  
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,                         
+      { avatar: avatarUrl.trim() },         
+      { new: true }                          
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
+
+    res.json({ avatar: updatedUser.avatar });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+
+
 
 
 export default router;

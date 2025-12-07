@@ -22,6 +22,8 @@ export default function CarDetail() {
         const fetchcarData = async () => {
             try {
             const response = await api(`/cars/${id}`);
+
+            
             setcarData(response.data.car);
             } catch (error) {
             console.error("Ошибка загрузки:", error);

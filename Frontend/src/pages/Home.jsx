@@ -11,7 +11,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [fileteredCars, setFilteredCars] = useState([]);
+  const [filteredCars, setFilteredCars] = useState([]);
 
   const token = localStorage.getItem('authToken');
 
@@ -31,6 +31,7 @@ export default function Home() {
             Authorization: `Bearer ${token}`
           }
         });
+
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
@@ -52,37 +53,39 @@ export default function Home() {
 
     fetchCars();
   }, [token, navigate]); 
-  const handleFilter = ({ brand, minPrice, maxPrice, status }) => {
-     if (brand == "all") {
-      setFilteredCars(cars);
-    }
 
-    // console.log(filtered.filter(car => car.brand === brand));
+
+
+  const handleFilter = ({ brand, minPrice, maxPrice, status }) => {
+    let result = [...cars]; 
 
     if (brand && brand !== "all") {
-      setFilteredCars(fileteredCars.filter(car => car.brand === brand));
-      console.log(fileteredCars.filter(car => car.brand === brand));
+      result = result.filter(car => car.brand === brand);
+      console.log(result);
     }
 
-    if (minPrice !== undefined && minPrice !== "") {
-      setFilteredCars(fileteredCars.filter(car => car.pricePerDay >= Number(minPrice)));
+
+    if (minPrice) {
+      result = result.filter(car => car.pricePerDay >= Number(minPrice));
     }
 
-    if (maxPrice !== undefined && maxPrice !== "") {
-      setFilteredCars(fileteredCars.filter(car => car.pricePerDay <= Number(maxPrice)));
+    if (maxPrice) {
+      result = result.filter(car => car.pricePerDay <= Number(maxPrice));
     }
 
     if (status && status !== "all") {
-      const isAvailable = status === "available";
-      setFilteredCars(fileteredCars.filter(car => car.available === isAvailable));
+      const isAvailable = status === "true";
+      result = result.filter(car => car.available === isAvailable);
     }
 
-    console.log(cars);
+    setFilteredCars(result);
+    console.log(filteredCars);
   };
+
 
  
   const handleReset = () => {
-    setCars(cars);
+    setFilteredCars(cars);
   };
 
   if (loading) return <Loading />;
@@ -105,24 +108,26 @@ export default function Home() {
         <CarFilter onFilter={handleFilter} onReset={handleReset} />
 
         <p className="text-muted">
-          Найдено автомобилей: <strong>{cars.length}</strong>
-          {cars.length !== cars.length && (
+          Найдено автомобилей: <strong>{filteredCars.length}</strong>
+          {filteredCars.length !== cars.length && (
             <button className="btn btn-link p-0 ms-3" onClick={handleReset}>
               Сбросить фильтры
             </button>
           )}
         </p>
 
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
-          {fileteredCars.length > 0 ? (
-            fileteredCars.map(item => (
-              <CarCard key={item.id} car={item} />
-            ))
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+          
+          {loading ? (
+            <Loading />
+          ) : filteredCars.length > 0 ? (
+            filteredCars.map(car => <CarCard key={car.id} car={car} />)
           ) : (
             <div className="col-12 text-center py-5">
-              <p className="text-muted">Автомобили не найдены по вашим критериям.</p>
+              <p className="text-muted">Автомобили не найдены.</p>
             </div>
           )}
+
         </div>
       </div>
     </main>

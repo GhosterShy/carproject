@@ -7,13 +7,15 @@ import comments from './routes/comments.js'
 
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: "http://localhost:3000",
     credentials: true
 }));
 
-app.use(express.json());
+
 
 
 
@@ -23,6 +25,8 @@ connectDB();
 app.use('/auth', auth);
 app.use('/cars', cars);
 app.use('/cars', comments); 
+
+
 
 
 if (process.env.NODE_ENV !== 'production') {
