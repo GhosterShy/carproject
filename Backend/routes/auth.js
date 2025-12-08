@@ -7,7 +7,7 @@ import authenticateJWT from '../middle.js'
 
 const router = express.Router();
 
-const JWT_SECRET = 'shyngys05';
+
 
 
 router.post('/register', async (req, res) => {
@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -85,7 +85,7 @@ router.post('/login', async (req, res) => {
   
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
