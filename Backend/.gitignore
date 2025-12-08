@@ -1,0 +1,10 @@
+.env.local
+.env.development
+.env.production
+node_modules/
+dist/
+build/
+.next/
+.vercel_build_output/
+.vercel/
+.cache/
