@@ -4,6 +4,7 @@ import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
 import authenticateJWT from '../middle.js'
 
+
 const router = express.Router();
 
 const JWT_SECRET = 'shyngys05';
@@ -45,7 +46,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({
       message: "Пользователь зарегистрирован",
-      token:token
+      token:token,
+      user: user
     });
 
   } catch (err) {
@@ -89,7 +91,7 @@ router.post('/login', async (req, res) => {
 
   
     res.json({
-      message: 'Успешный вход', token
+      message: 'Успешный вход', token,user
     });
 
   } catch (error) {
@@ -109,7 +111,7 @@ router.get('/profile', authenticateJWT, async (req, res) => {
 
   try {
 
-    console.log(req.user.id)
+    // console.log(req.user.id)
     const user = await User.find({_id:req.user.id});
 
     if (!user) {
@@ -130,6 +132,42 @@ router.get('/profile', authenticateJWT, async (req, res) => {
   }
 });
 
+
+router.patch("/profile", authenticateJWT, async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone } = req.body; 
+    const userId = req.user.id;
+
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Пользователь не найден",
+      });
+    }
+
+
+    if (firstName && firstName.trim() !== "") user.firstName = firstName;
+    if (lastName && lastName.trim() !== "") user.lastName = lastName;
+    if (email && email.trim() !==  "") user.email = email;
+    if (phone && phone.trim() !== "") user.phone = phone;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Профиль успешно обновлён",
+      user,
+    });
+  } catch (error) {
+    console.error("Ошибка обновления профиля:", error);
+    res.status(500).json({
+      success: false,
+      message: "Ошибка сервера",
+      error: error.message,
+    });
+  }
+});
 
 
 

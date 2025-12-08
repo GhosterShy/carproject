@@ -4,6 +4,7 @@ import cors from "cors";
 import auth from './routes/auth.js';
 import cars from './routes/cars.js';
 import comments from './routes/comments.js' 
+import rentals  from './routes/rental.js'
 
 
 const app = express();
@@ -25,6 +26,8 @@ connectDB();
 app.use('/auth', auth);
 app.use('/cars', cars);
 app.use('/cars', comments); 
+app.use('/rental',rentals);
+
 
 
 

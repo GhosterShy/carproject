@@ -1,0 +1,24 @@
+.rental-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+.rental-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+.car-img {
+      height: 300px;
+      object-fit: cover;
+      width: -moz-available;
+    }
+.status-badge {
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+    }
+.price-day {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0d6efd;
+    }

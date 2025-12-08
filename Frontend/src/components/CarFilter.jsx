@@ -30,7 +30,7 @@ export default function CarFilter({ onFilter }) {
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
           >
-            <option value="All">Все марки</option>
+            <option value="all">Все марки</option>
             <option value="BMW">BMW</option>
             <option value="Mercedes">Mercedes</option>
             <option value="Audi">Audi</option>

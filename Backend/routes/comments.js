@@ -6,8 +6,8 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/:carId/comments', async (req, res) => {
   try {
-    const comments = await Comment.find({ blog: req.params.blogId })
-      .populate('author', 'username')   
+    const comments = await Comment.find({ car: req.params.carId })
+      .populate('author', 'firstName lastName avatar')   
       .sort({ createdAt: -1 });
 
     res.json(comments);
@@ -24,11 +24,9 @@ router.post('/:carId/comments', authenticateJWT, async (req, res) => {
     const comment = new Comment({
       text,
       author: req.user.id,
-      car: req.params.blogId
+      car: req.params.carId
     });
     await comment.save();
-
-
     await comment.populate('author', 'username');
 
     res.status(201).json(comment);

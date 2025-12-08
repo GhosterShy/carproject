@@ -61,6 +61,11 @@ export default function Home() {
 
     if (brand && brand !== "all") {
       result = result.filter(car => car.brand === brand);
+      // console.log(result);
+    }
+
+    if (brand && brand == "all") {
+      result = [...cars];
       console.log(result);
     }
 
@@ -79,7 +84,7 @@ export default function Home() {
     }
 
     setFilteredCars(result);
-    console.log(filteredCars);
+    // console.log(filteredCars);
   };
 
 

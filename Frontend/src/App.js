@@ -7,6 +7,7 @@ import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./components/AuthContext";
+import Rentels from "./pages/Rentels";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/Login" element={<LoginPage />} />
         <Route path="/Register" element={<RegisterPage />} />
+        <Route path="/my_rentels" element={<Rentels />} />
         {/* <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} /> */}
       </Routes>

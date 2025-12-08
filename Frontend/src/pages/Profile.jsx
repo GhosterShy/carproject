@@ -7,8 +7,18 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-  const [inputUrl, setInputUrl] = useState(""); // поле ввода ссылки
+  const [inputUrl, setInputUrl] = useState(""); 
   const token = localStorage.getItem("authToken");
+
+
+
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+
+
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -41,6 +51,10 @@ const Profile = () => {
     }
   }, [token]);
 
+
+
+
+
   const handleSaveAvatar = async () => {
     if (!inputUrl.trim()) {
       alert("Вставьте ссылку на изображение!");
@@ -51,7 +65,7 @@ const Profile = () => {
       const response = await api("auth/upload-avatar", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",  // <--- обязательно!
+          'Content-type':'application/json',
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
@@ -74,6 +88,38 @@ const Profile = () => {
       alert(err.message);
     }
   };
+
+
+  const handleUpdateProfile = async () => {
+    try {
+      const response = await api("auth/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          firstName: newFirstName,
+          lastName: newLastName,
+          email: newEmail,
+          phone: newPhone,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Ошибка обновления профиля");
+      }
+
+      const data = await response.json();
+      console.log("Обновлено:", data.user);
+      setUser(data.user);
+      alert("Профиль успешно обновлён!");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
 
 
 
@@ -166,7 +212,7 @@ const Profile = () => {
                       type="text"
                       className="form-control"
                       defaultValue={user.firstName || ""}
-                      readOnly
+                      onChange={(e) => setNewFirstName(e.target.value)}
                     />
                   </div>
                   <div className="col-md-6">
@@ -175,7 +221,7 @@ const Profile = () => {
                       type="text"
                       className="form-control"
                       defaultValue={user.lastName || ""}
-                      readOnly
+                       onChange={(e) => setNewLastName(e.target.value)}
                     />
                   </div>
                   <div className="col-md-6">
@@ -184,29 +230,29 @@ const Profile = () => {
                       type="email"
                       className="form-control"
                       defaultValue={user.email || ""}
-                      readOnly
+                       onChange={(e) => setNewEmail(e.target.value)}
                     />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Mobile Number</label>
                     <div className="input-group">
-                      <span className="input-group-text">+234</span>
+                      <span className="input-group-text">+7</span>
                       <input
                         type="tel"
                         className="form-control"
                         defaultValue={user.phone || ""}
-                        readOnly
+                        onChange={(e) => setNewPhone(e.target.value)}
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="text-center mt-5">
-                  <button type="button" className="btn btn-primary btn-lg px-5" disabled>
+                  <button type="button" onClick={handleUpdateProfile} className="btn btn-primary btn-lg px-5" >
                     Сохранить изменения
                   </button>
                   <p className="text-muted mt-2">
-                    <small>Редактирование профиля временно недоступно</small>
+                    <small>Редактирование профиля</small>
                   </p>
                 </div>
               </form>
