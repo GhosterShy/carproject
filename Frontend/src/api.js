@@ -1,9 +1,9 @@
-const API_BASE = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';  
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export const api = (endpoint, options = {}) => {
   return fetch(`${API_BASE}/${endpoint}`, {
     credentials: 'include',
-    headers: {
+    headers: {  
        ...options.headers,
       'Content-Type': 'application/json'
     },
