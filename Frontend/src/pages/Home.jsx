@@ -6,10 +6,12 @@ import CarFilter from "../components/CarFilter.jsx";
 import Loading from "../components/Loading.jsx";
 import api from "../api.js";
 
+
 export default function Home() {
   const [cars, setCars] = useState([]);              
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const search = searchParams.get('q') || '';
   const navigate = useNavigate();
   const [filteredCars, setFilteredCars] = useState([]);
 
@@ -55,6 +57,19 @@ export default function Home() {
   }, [token, navigate]); 
 
 
+  const handleSearch = (searchQuery) => {
+    if (!searchQuery) {
+      setFilteredCars(cars);
+      return;
+    }
+
+    const filtered = cars.filter(car =>
+      car.brand.toLowerCase().includes(searchQuery) || car.model.toLowerCase().includes(searchQuery)
+      || `${car.brand} ${car.model}`.toLowerCase().includes(searchQuery)
+    );
+
+    setFilteredCars(filtered);
+  }
 
   const handleFilter = ({ brand, minPrice, maxPrice, status }) => {
     let result = [...cars]; 
@@ -110,7 +125,7 @@ export default function Home() {
       </section>
 
       <div className="container my-5">
-        <CarFilter onFilter={handleFilter} onReset={handleReset} />
+        <CarFilter onFilter={handleFilter} onReset={handleReset} onSearch={handleSearch} />
 
         <p className="text-muted">
           Найдено автомобилей: <strong>{filteredCars.length}</strong>
